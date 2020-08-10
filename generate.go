@@ -26,9 +26,6 @@ func main() {
 	// start reading folder
 	imageList := getImages(incomingPath)
 
-	// image count
-	imageCount := 0
-
 	// check images
 	imageCheck, imageCount := checkImages(imageList)
 
@@ -36,9 +33,9 @@ func main() {
 		fmt.Printf("We found %d images\n", imageCount)
 		// create a new folder with prefix
 		makeFolder(prefix)
-
+		ctr := 0
 		for _, image := range imageList {
-			stringCounter := strconv.Itoa(imageCount)
+			stringCounter := strconv.Itoa(ctr)
 			destinationFile := "out/" + prefix + "/" + prefix + "_" + stringCounter + ".jpg"
 			_, err := imageCopy("incoming/"+image, destinationFile)
 			if err != nil {
@@ -46,9 +43,12 @@ func main() {
 				fmt.Println(err)
 			}
 			// TODO: find different loop?
-			imageCount++
+			 ctr++
 			resizeImage(destinationFile)
 		}
+
+		fmt.Printf("Cornelius Car Show<br /> %s", buildHtml(prefix, imageCount))
+
 
 	} else {
 		fmt.Println("There are no images in the incoming folder")
@@ -141,6 +141,24 @@ func resizeImage(fileName string) {
 	}
 }
 
-func buildHtml(prefix string, imageCount int) {
+func buildHtml(prefix string, imageCount int) string {
 
+	htmlOut := "<table>"
+
+	for i := 0; i < imageCount; i++ {
+		if i == 0 {
+			htmlOut += "<tr>"
+		}
+		fileOutName := prefix + "_" + strconv.Itoa(i)
+
+		htmlOut += "<a href=\"" + fileOutName + ".jpg" + "\"><img src=\"" + fileOutName + "_t.jpg\"></a>"
+
+		if i % 5 == 0 {
+			htmlOut += "</tr>"
+		}
+
+	}
+
+	htmlOut += "</table>"
+	return htmlOut
 }
